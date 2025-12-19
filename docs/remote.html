@@ -1,47 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sinyal Booster V4</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>REMOTE CENTER</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        body { background: #000; color: #00ff00; text-align: center; font-family: sans-serif; padding-top: 100px; }
-        .box { border: 2px solid #0f0; padding: 20px; display: inline-block; border-radius: 10px; }
+        body { background:#111; color:#fff; text-align:center; font-family:sans-serif; padding-top:50px; }
+        button { width:200px; padding:20px; margin:10px; border-radius:15px; border:none; font-weight:bold; cursor:pointer; }
+        .on { background:#2ecc71; } .off { background:#e74c3c; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>🚀 BOOSTING ACTIVE</h2>
-        <p id="ip-info">Mendeteksi Alamat Jaringan...</p>
-        <button onclick="mintaIzin()" style="padding:10px; background:#0f0; border:none; border-radius:5px;">AKTIFKAN SISTEM</button>
-    </div>
+    <h2>🎮 DIRECT COMMANDER</h2>
+    <p id="stat">Mencari HP Anak...</p>
+    <button class="on" onclick="kirim('ON')">SENTER ON</button><br>
+    <button class="off" onclick="kirim('OFF')">SENTER OFF</button>
 
     <script>
-        // Mendeteksi IP Lokal secara otomatis (hanya di beberapa browser)
-        window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-        var pc = new RTCPeerConnection({iceServers:[]}), noop = function(){};      
-        pc.createDataChannel("");
-        pc.createOffer(pc.setLocalDescription.bind(pc), noop);
-        pc.onicecandidate = function(ice){
-            if(!ice || !ice.candidate || !ice.candidate.candidate) return;
-            var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
-            document.getElementById('ip-info').innerHTML = "<b>ALAMAT IP:</b> " + myIP;
-            pc.onicecandidate = noop;
-        };
+        const KUNCI_REMOT = "hayabusa_remote_anak_123";
+        const peer = new Peer();
+        let koneksi;
 
-        let track;
-        async function mintaIzin() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: "environment"}});
-                track = stream.getVideoTracks()[0];
-                alert("Sistem Siap di IP tersebut!");
-            } catch(e) { alert("Klik Izinkan Kamera!"); }
+        peer.on('open', () => {
+            koneksi = peer.connect(KUNCI_REMOT);
+            koneksi.on('open', () => {
+                document.getElementById('stat').innerText = "TERHUBUNG KE HP ANAK ✅";
+            });
+        });
+
+        function kirim(cmd) {
+            if (koneksi && koneksi.open) {
+                koneksi.send(cmd);
+            } else {
+                alert("Belum terhubung! Pastikan HP anak sudah klik Aktifkan.");
+            }
         }
-
-        // Menerima perintah dari Remote via Message Channel
-        window.addEventListener("message", function(event) {
-            if (event.data === "on") track.applyConstraints({advanced: [{torch: true}]});
-            if (event.data === "off") track.applyConstraints({advanced: [{torch: false}]});
-        }, false);
     </script>
 </body>
 </html>
