@@ -2,66 +2,106 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Remote HP Anak</title>
+<title>Remote HP Anak - Fixed</title>
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
 body{background:#121212;color:#fff;font-family:sans-serif;text-align:center;padding:20px}
-.card{background:#1e1e1e;padding:18px;border-radius:14px;margin-bottom:15px}
-input,button{width:100%;padding:14px;margin-top:10px;border-radius:10px;font-size:15px}
-.b1{background:#3498db;color:#fff;border:0}
-.b2{background:#f1c40f;color:#000;border:0}
-.b3{background:#e74c3c;color:#fff;border:0}
-img{max-width:100%;border-radius:10px}
+.card{background:#1e1e1e;padding:18px;border-radius:14px;margin-bottom:15px;border:1px solid #333}
+input,button{width:100%;padding:14px;margin-top:10px;border-radius:10px;font-size:15px;box-sizing:border-box}
+input{background:#2a2a2a;border:1px solid #444;color:#fff}
+.b1{background:#3498db;color:#fff;border:0;font-weight:bold}
+.b2{background:#f1c40f;color:#000;border:0;font-weight:bold}
+.b3{background:#e74c3c;color:#fff;border:0;font-weight:bold}
+img{max-width:100%;border-radius:10px;margin-top:10px;border:2px solid #333}
+#status-text {font-size:12px;margin-bottom:10px;color:#aaa}
 </style>
 </head>
 <body>
 
-<h3>📱 DASHBOARD HP ANAK</h3>
+<h3>📱 DASHBOARD REMOTE</h3>
+<div id="status-text">Status: Mencari Jaringan...</div>
 
 <div class="card">
-  <input id="id" placeholder="ID Anak">
-  <input id="pin" placeholder="PIN" type="password">
-  <button class="b1" onclick="hubungkan()">HUBUNGKAN</button>
+  <input id="inp_id" placeholder="Masukkan ID Anak">
+  <input id="inp_pin" placeholder="Masukkan PIN" type="password">
+  <button class="b1" onclick="hubungkan()">🔌 HUBUNGKAN</button>
+</div>
+
+<div class="card" style="display:flex; justify-content:space-around;">
+  <p id="txt_battery">🪫 --%</p>
+  <p id="txt_network">📶 --</p>
 </div>
 
 <div class="card">
-  <p id="battery">🪫 --%</p>
-  <p id="network">📶 --</p>
-</div>
-
-<div class="card">
-  <button class="b2" onclick="kirim('FOTO')">📸 FOTO</button>
-  <button class="b2" onclick="kirim('LOKASI')">📍 LOKASI</button>
+  <button class="b2" onclick="kirim('FOTO')">📸 AMBIL FOTO</button>
+  <button class="b2" onclick="kirim('LOKASI')">📍 CEK LOKASI</button>
   <button class="b3" onclick="kirim('PUTUS')">⛔ PUTUSKAN</button>
 </div>
 
 <div class="card" id="hasil" style="display:none"></div>
 
 <script>
-let peer=new Peer(), conn;
-let PID="", PIN="";
+let peer = new Peer();
+let conn;
+let targetID = "", targetPIN = "";
+
+// Saat Peer Abang siap
+peer.on('open', (id) => {
+    document.getElementById('status-text').innerText = "ID Abang: " + id;
+});
 
 function hubungkan(){
-  PID=id.value.trim(); PIN=pin.value.trim();
-  if(!PID||!PIN){ alert("ID & PIN"); return; }
+    targetID = document.getElementById('inp_id').value.trim();
+    targetPIN = document.getElementById('inp_pin').value.trim();
+    
+    if(!targetID || !targetPIN){ alert("ID & PIN Wajib diisi!"); return; }
 
-  conn=peer.connect(PID);
-  conn.on("open",()=>alert("Terhubung ✅"));
-  conn.on("data",(d)=>{
-    hasil.style.display="block";
-    if(d.type==="FOTO") hasil.innerHTML=`<img src="${d.data}">`;
-    if(d.type==="LOKASI") hasil.innerHTML=
-      `<a target="_blank" style="color:#3498db"
-      href="https://maps.google.com?q=${d.lat},${d.lon}">Buka Maps</a>`;
-    if(d.type==="BATTERY")
-      battery.innerText=`🪫 ${d.level}% ${d.charging?"⚡":""}`;
-    if(d.type==="NETWORK")
-      network.innerText=`📶 ${d.online?"Online":"Offline"} (${d.type})`;
-  });
+    document.getElementById('status-text').innerText = "Menghubungkan ke: " + targetID;
+    
+    conn = peer.connect(targetID);
+
+    conn.on("open", () => {
+        alert("Terhubung ✅");
+        document.getElementById('status-text').innerText = "Status: TERHUBUNG KE " + targetID;
+        document.getElementById('status-text').style.color = "#2ecc71";
+    });
+
+    conn.on("data", (d) => {
+        const boxHasil = document.getElementById('hasil');
+        boxHasil.style.display = "block";
+        
+        if(d.type === "FOTO") {
+            boxHasil.innerHTML = `<b>Hasil Foto:</b><br><img src="${d.data}">`;
+        }
+        
+        if(d.type === "LOKASI") {
+            // Fix Link Maps
+            const mapUrl = `https://www.google.com/maps?q=${d.lat},${d.lon}`;
+            boxHasil.innerHTML = `<b>Lokasi Anak:</b><br><a target="_blank" style="color:#3498db;text-decoration:none;" href="${mapUrl}">📍 Buka Google Maps</a>`;
+        }
+        
+        if(d.type === "BATTERY") {
+            document.getElementById('txt_battery').innerHTML = `🪫 ${d.level}% ${d.charging ? "⚡" : ""}`;
+        }
+        
+        if(d.type === "NETWORK") {
+            // Fix penamaan variabel biar gak bentrok
+            document.getElementById('txt_network').innerText = `📶 ${d.online ? "Online" : "Offline"} (${d.type_net || '?'})`;
+        }
+    });
+
+    conn.on("close", () => {
+        document.getElementById('status-text').innerText = "Status: TERPUTUS";
+        document.getElementById('status-text').style.color = "#e74c3c";
+    });
 }
 
-function kirim(cmd){
-  if(conn&&conn.open) conn.send({cmd:cmd,pin:PIN});
+function kirim(command){
+    if(conn && conn.open) {
+        conn.send({ cmd: command, pin: targetPIN });
+    } else {
+        alert("Koneksi belum tersambung!");
+    }
 }
 </script>
 
