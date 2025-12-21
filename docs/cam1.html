@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>KAMERA AKTIF</h2>
+<script>
+navigator.mediaDevices.getUserMedia({ video:true })
+.then(s=>{
+  let v=document.createElement("video");
+  v.autoplay=true;
+  v.srcObject=s;
+  document.body.appendChild(v);
+})
+.catch(()=>alert("izin kamera ditolak"));
+</script>
+</body>
+</html>
