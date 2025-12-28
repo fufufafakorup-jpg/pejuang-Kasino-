@@ -3,177 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Web Clone (v2025)</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-        /* Custom Tailwind Colors (optional, but good for consistency) */
-        :root {
-            --whatsapp-green: #075E54; /* Darker green for top bar */
-            --whatsapp-light-green: #128C7E; /* Lighter green for active elements */
-            --whatsapp-bg-light: #ECE5DD; /* Light background for chat area */
-            --whatsapp-text-gray: #4A4A4A; /* General text color */
-        }
-
-        .bg-whatsapp-green { background-color: var(--whatsapp-green); }
-        .text-whatsapp-light-green { color: var(--whatsapp-light-green); }
-        .bg-whatsapp-light-green { background-color: var(--whatsapp-light-green); }
-        .bg-whatsapp-bg-light { background-color: var(--whatsapp-bg-light); }
-        .text-whatsapp-text-gray { color: var(--whatsapp-text-gray); }
-
-        /* Ensure the main container mimics a phone screen */
-        .phone-screen {
-            max-width: 420px; /* Typical phone width */
-            height: 100vh; /* Full viewport height */
-            margin: 0 auto; /* Center the screen */
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            border-radius: 16px;
-            overflow: hidden;
-            background-color: white;
-        }
-
-        /* Hide scrollbar for a cleaner look, but still allow scrolling */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-    </style>
+    <title>Modern Admin 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body class="bg-gray-100 font-sans antialiased">
+<body>
 
-    <div class="phone-screen">
-        <!-- Top Bar -->
-        <header class="bg-whatsapp-green text-white p-4 flex items-center justify-between shadow-md">
-            <div class="flex items-center">
-                <h1 class="text-xl font-semibold mr-4">WhatsApp</h1>
-                <!-- Search Bar (integrated into top bar) -->
-                <div class="relative flex-grow">
-                    <input type="text" placeholder="Cari..." class="w-full py-1 px-3 pl-10 rounded-full bg-white bg-opacity-20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-30 transition-all duration-200">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-white text-sm"></i>
-                </div>
+    <div class="wrapper">
+        <nav id="sidebar" class="active">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-bolt me-2"></i> <span>MODERN UI</span>
             </div>
-            <div class="flex space-x-5 ml-4">
-                <button class="text-xl hover:text-gray-200 transition-colors"><i class="fa-solid fa-camera"></i></button>
-                <button class="text-xl hover:text-gray-200 transition-colors"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-            </div>
-        </header>
-
-        <!-- Chat List -->
-        <main class="flex-1 overflow-y-auto hide-scrollbar bg-whatsapp-bg-light relative">
-            <!-- Example Chat Item 1 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=1" alt="Profil John Doe" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">John Doe</h2>
-                    <p class="text-sm text-gray-500 truncate">Oke, sampai jumpa nanti!</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">10:30 AM</div>
-            </div>
-
-            <!-- Example Chat Item 2 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=2" alt="Profil Jane Smith" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Jane Smith</h2>
-                    <p class="text-sm text-gray-500 truncate">Sudah kirim laporannya?</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">Kemarin</div>
-            </div>
-
-            <!-- Example Chat Item 3 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=3" alt="Profil Grup Keluarga" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Grup Keluarga</h2>
-                    <p class="text-sm text-gray-500 truncate">Bibi: Jangan lupa acara besok ya!</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">Selasa</div>
-            </div>
-
-            <!-- Example Chat Item 4 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=4" alt="Profil Toko Online" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Toko Online</h2>
-                    <p class="text-sm text-gray-500 truncate">Pesanan Anda #12345 sedang dalam pengiriman.</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">Senin</div>
-            </div>
-
-            <!-- Example Chat Item 5 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=5" alt="Profil Sarah" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Sarah</h2>
-                    <p class="text-sm text-gray-500 truncate">Aku sudah di jalan, sebentar lagi sampai.</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">09:15 AM</div>
-            </div>
-
-            <!-- Example Chat Item 6 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=6" alt="Profil David" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">David</h2>
-                    <p class="text-sm text-gray-500 truncate">Jangan lupa bawa bukunya ya!</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">08:00 AM</div>
-            </div>
-
-            <!-- Example Chat Item 7 -->
-            <div class="flex items-center p-4 border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=7" alt="Profil Tim Kerja" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Tim Kerja</h2>
-                    <p class="text-sm text-gray-500 truncate">Rapat jam 2 siang, jangan telat.</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">07:45 AM</div>
-            </div>
-
-            <!-- Example Chat Item 8 -->
-            <div class="flex items-center p-4 hover:bg-gray-100 cursor-pointer transition-colors">
-                <img src="https://i.pravatar.cc/150?img=8" alt="Profil Ibu" class="w-12 h-12 rounded-full object-cover mr-4">
-                <div class="flex-1">
-                    <h2 class="font-semibold text-gray-800">Ibu</h2>
-                    <p class="text-sm text-gray-500 truncate">Sudah makan nak?</p>
-                </div>
-                <div class="ml-auto text-xs text-gray-400">07:00 AM</div>
-            </div>
-
-            <!-- Floating Action Button (FAB) -->
-            <button class="fixed bottom-20 right-4 bg-whatsapp-light-green text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-colors duration-200 z-10">
-                <i class="fa-solid fa-message text-2xl"></i>
-            </button>
-        </main>
-
-        <!-- Bottom Navigation Bar -->
-        <nav class="bg-white border-t border-gray-200 p-2 flex justify-around items-center shadow-inner">
-            <a href="#" class="flex flex-col items-center text-whatsapp-light-green p-2 rounded-lg">
-                <i class="fa-solid fa-comment text-xl mb-1"></i>
-                <span class="text-xs font-semibold">Chat</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-gray-500 hover:text-whatsapp-light-green p-2 rounded-lg transition-colors">
-                <i class="fa-solid fa-phone text-xl mb-1"></i>
-                <span class="text-xs">Panggilan</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-gray-500 hover:text-whatsapp-light-green p-2 rounded-lg transition-colors">
-                <i class="fa-solid fa-arrows-rotate text-xl mb-1"></i>
-                <span class="text-xs">Pembaruan</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-gray-500 hover:text-whatsapp-light-green p-2 rounded-lg transition-colors">
-                <i class="fa-solid fa-star text-xl mb-1"></i>
-                <span class="text-xs">Fitur</span>
-            </a>
+            <ul class="list-unstyled components">
+                <li class="active"><a href="#"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                <li><a href="#"><i class="fas fa-box"></i> <span>Products</span></a></li>
+                <li><a href="#"><i class="fas fa-chart-pie"></i> <span>Charts</span></a></li>
+                <li><a href="#"><i class="fas fa-table"></i> <span>Tables</span></a></li>
+                <li><a href="#"><i class="fas fa-file-alt"></i> <span>Forms</span></a></li>
+                <hr>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Login</span></a></li>
+            </ul>
         </nav>
+
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fas fa-align-left"></i>
+                </button>
+                <form class="d-none d-md-inline-block form-inline ms-4 me-auto my-2 my-md-0">
+                    <div class="input-group search-bar">
+                        <input class="form-control border-0" type="text" placeholder="Search for..." aria-label="Search">
+                        <button class="btn btn-link p-0 pe-2 text-muted" type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-dark btn-sm me-3" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="dropdown me-3">
+                        <i class="fas fa-bell position-relative cursor-pointer" id="notifDropdown" data-bs-toggle="dropdown">
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </i>
+                    </div>
+                    <div class="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" class="rounded-circle cursor-pointer" width="35" data-bs-toggle="dropdown">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card p-3 shadow-sm rounded-4 bg-white border-start border-primary border-5">
+                            <p class="text-muted small mb-1">Total Users</p>
+                            <h3 class="mb-0">12.5K <span class="text-success small"><i class="fas fa-arrow-up"></i> 5%</span></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card p-3 shadow-sm rounded-4 bg-white border-start border-success border-5">
+                            <p class="text-muted small mb-1">Revenue</p>
+                            <h3 class="mb-0">$45.2K <span class="text-success small"><i class="fas fa-arrow-up"></i> 12%</span></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card p-3 shadow-sm rounded-4 bg-white border-start border-info border-5">
+                            <p class="text-muted small mb-1">Orders</p>
+                            <h3 class="mb-0">1,840 <span class="text-danger small"><i class="fas fa-arrow-down"></i> 2%</span></h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card p-3 shadow-sm rounded-4 bg-white border-start border-warning border-5">
+                            <p class="text-muted small mb-1">Growth</p>
+                            <h3 class="mb-0">22.4% <span class="text-success small"><i class="fas fa-arrow-up"></i> 8%</span></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="card-title mb-4">Sales Analytics</h5>
+                            <canvas id="lineChart" height="150"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="card-title mb-4">User Demographics</h5>
+                            <canvas id="pieChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5>Recent Transactions</h5>
+                                <input type="text" class="form-control form-control-sm w-25" placeholder="Search table...">
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer</th>
+                                            <th>Status</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableData">
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="mb-4">Add New User</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" placeholder="John Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" placeholder="john@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select">
+                                        <option>Admin</option>
+                                        <option>Editor</option>
+                                        <option>Viewer</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Register User</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
