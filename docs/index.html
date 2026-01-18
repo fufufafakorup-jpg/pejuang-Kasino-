@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard Pengajuan - Pejuang Casino</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-text { width: 100%; max-width: 450px; font-size: 0.9rem; margin-bottom: 15px; color: #888; text-align: left; }
+
+        .search-container {
+            width: 100%; max-width: 450px; position: relative; margin-bottom: 25px;
+        }
+        
+        .search-box {
+            width: 100%; padding: 16px; background: #151515; border: 1px solid #222; border-radius: 12px;
+            color: #fff; font-size: 1rem; outline: none;
+        }
+        
+        .search-icon {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            color: #555; font-size: 1.3rem; cursor: pointer;
+        }
+
+        .title-section { width: 100%; max-width: 450px; font-size: 0.8rem; color: #888; margin-bottom: 15px; font-weight: 500; text-transform: uppercase; }
+
+        .table-container {
+            width: 100%; max-width: 450px; background: #151515; border-radius: 15px; border: 1px solid #222; height: 350px; overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 15px; text-align: left; border-bottom: 1px solid #222; color: #444; font-size: 0.8rem; }
+
+        /* === OVERLAY DIBIKIN AGAK TERANG === */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            /* Ubah 0.85 jadi 0.5 supaya belakangnya lebih terang dan kelihatan nomornya */
+            background: rgba(0, 0, 0, 0.5); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999;
+        }
+
+        .modal-card {
+            background: linear-gradient(180deg, #1a2a22 0%, #111111 100%);
+            width: 90%;
+            max-width: 360px;
+            padding: 40px 20px;
+            border-radius: 25px;
+            text-align: center;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            position: relative;
+            margin-top: 100px; /* INI KUNCINYA: Biar dia turun dikit dari tengah */
+        }
+
+        .close-x {
+            position: absolute; top: 15px; right: 15px;
+            width: 32px; height: 32px; background: rgba(255,255,255,0.05);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #888; cursor: pointer;
+        }
+
+        .check-circle {
+            width: 85px; height: 85px;
+            background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            margin: 0 auto 25px; font-size: 45px; color: white;
+        }
+
+        .modal-card h3 { font-size: 1.2rem; font-weight: 400; color: #fff; margin-bottom: 5px; }
+        .modal-card .status-text { color: #888; font-size: 1.1rem; margin-bottom: 30px; }
+
+        .btn-ya {
+            width: 100%; padding: 16px; background: #2ecc71; border: none;
+            border-radius: 12px; color: #000; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+        }
+
+        /* NAVBAR BAWAH PERSIS GAMBAR */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 500px;
+            background: #111; display: flex; justify-content: space-around;
+            padding: 15px 0; border-top: 1px solid #222;
+        }
+        .nav-item { text-align: center; color: #555; font-size: 0.75rem; text-decoration: none; }
+        .nav-item.active { color: #2ecc71; }
+        .nav-icon { display: block; font-size: 1.2rem; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <p class="header-text">Silakan masukkan nomor WhatsApp pengguna untuk melakukan pencarian</p>
+
+    <div class="search-container">
+        <input type="text" id="waInput" class="search-box" value="+62 853-4359-6372">
+        <span class="search-icon" onclick="openModal()">🔍</span>
+    </div>
+
+    <p class="title-section">Catatan pengajuan jackpot pejuang casino</p>
+
+    <div class="table-container">
+        <table>
+            <tr><th>Tanggal</th><th>Nomor WA</th><th>Uid</th><th>No.Deposit</th></tr>
+        </table>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal-card">
+            <div class="close-x" onclick="closeModal()">✕</div>
+            <div class="check-circle">✓</div>
+            <h3>pengajuan jackpot pengguna ini</h3>
+            <p class="status-text">Berhasil</p>
+            <button class="btn-ya" onclick="closeModal()">Ya</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🕒</span> Data
+        </a>
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">📝</span> Pengajuan
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📞</span> Telepon
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">👤</span> Akun
+        </a>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        function openModal() { overlay.style.display = 'flex'; }
+        function closeModal() { overlay.style.display = 'none'; }
+        document.getElementById('waInput').addEventListener("keypress", (e) => {
+            if (e.key === "Enter") openModal();
+        });
+    </script>
+
+</body>
+      </html>
