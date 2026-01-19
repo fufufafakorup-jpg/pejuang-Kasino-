@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dashboard Pengajuan - Pejuang Casino</title>
+  <title id="webTitle">Dashboard Pengajuan - Pejuang Casino</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -19,6 +19,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: 0.3s;
     }
     .header-text {
       width: 100%;
@@ -43,16 +44,17 @@
       color: #fff;
       font-size: 1rem;
       outline: none;
+      transition: 0.3s;
     }
-    .search-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #555;
-      font-size: 1.3rem;
-      cursor: pointer;
+
+    /* WARNA TEMA */
+    .pejuang-theme .search-box {
+      border-color: #2ecc71;
     }
+    .lion-theme .search-box {
+      border-color: #f1c40f;
+    }
+
     .title-section {
       width: 100%;
       max-width: 450px;
@@ -62,7 +64,6 @@
       font-weight: 500;
       text-transform: uppercase;
     }
-
     .table-container {
       width: 100%;
       max-width: 450px;
@@ -94,8 +95,13 @@
       border-bottom: 1px dotted #222;
     }
 
-    .status-done {
+    /* WARNA STATUS */
+    .pejuang-theme .status-done {
       color: #2ecc71;
+      font-weight: 600;
+    }
+    .lion-theme .status-done {
+      color: #f1c40f;
       font-weight: 600;
     }
     .status-pending {
@@ -123,13 +129,11 @@
       border-radius: 25px;
       text-align: center;
       border: 1px solid rgba(46, 204, 113, 0.2);
-      position: relative;
-      margin-top: 100px;
     }
+
     .check-circle {
       width: 85px;
       height: 85px;
-      background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -138,16 +142,28 @@
       font-size: 45px;
       color: white;
     }
+    .pejuang-theme .check-circle {
+      background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
+    }
+    .lion-theme .check-circle {
+      background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+    }
+
     .btn-ya {
       width: 100%;
       padding: 16px;
-      background: #2ecc71;
       border: none;
       border-radius: 12px;
       color: #000;
       font-weight: 700;
       font-size: 1.1rem;
       cursor: pointer;
+    }
+    .pejuang-theme .btn-ya {
+      background: #2ecc71;
+    }
+    .lion-theme .btn-ya {
+      background: #f1c40f;
     }
 
     .bottom-nav {
@@ -165,11 +181,13 @@
       text-align: center;
       color: #555;
       font-size: 0.75rem;
-      text-decoration: none;
       cursor: pointer;
     }
-    .nav-item.active {
+    .pejuang-theme .nav-item.active {
       color: #2ecc71;
+    }
+    .lion-theme .nav-item.active {
+      color: #f1c40f;
     }
     .nav-icon {
       display: block;
@@ -178,15 +196,15 @@
     }
   </style>
 </head>
-<body>
+<body class="pejuang-theme">
 
-  <p class="header-text">
-    Silakan masukkan nomor WhatsApp pengguna untuk melakukan pencarian
+  <p class="header-text" id="brandDesc">
+    Silakan masukkan nomor WhatsApp pengguna untuk melakukan pencarian (PEJUANG CASINO)
   </p>
 
   <div class="search-container">
     <input type="text" id="waInput" class="search-box" placeholder="silahkan taruh nomor db anda">
-    <span class="search-icon" onclick="openModal()">🔍</span>
+    <span style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #555; cursor: pointer;" onclick="openModal()">🔍</span>
   </div>
 
   <p class="title-section" id="tableTitle">
@@ -194,12 +212,11 @@
   </p>
 
   <div class="table-container">
-    <table id="mainTable">
+    <table>
       <thead id="tableHead">
         <tr><th>Tanggal</th><th>Nomor WA</th><th>Uid</th><th>No.Deposit</th></tr>
       </thead>
-      <tbody id="tableBody">
-      </tbody>
+      <tbody id="tableBody"></tbody>
     </table>
   </div>
 
@@ -223,39 +240,60 @@
     <div class="nav-item active" id="navPengajuan" onclick="showPengajuan()">
       <span class="nav-icon">📝</span> Pengajuan
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="alert('Menu Telepon')">
       <span class="nav-icon">📞</span> Telepon
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="switchAccount()">
       <span class="nav-icon">👤</span> Akun
     </div>
   </div>
 
   <script>
-    const overlay = document.getElementById('overlay');
+    let currentBrand = "PEJUANG"; // Default
+    const waInput = document.getElementById('waInput');
     const tableBody = document.getElementById('tableBody');
     const tableHead = document.getElementById('tableHead');
     const tableTitle = document.getElementById('tableTitle');
-    const waInput = document.getElementById('waInput');
+    const brandDesc = document.getElementById('brandDesc');
+    const webTitle = document.getElementById('webTitle');
+
+    function switchAccount() {
+      let targetBrand = (currentBrand === "PEJUANG") ? "LION CASINO": "PEJUANG CASINO";
+      let konfirmasi = confirm(`Apakah anda ingin beralih ke ${targetBrand}?`);
+
+      if (konfirmasi) {
+        if (currentBrand === "PEJUANG") {
+          currentBrand = "LION";
+          document.body.className = "lion-theme";
+          webTitle.innerText = "Dashboard Pengajuan - Lion Casino";
+        } else {
+          currentBrand = "PEJUANG";
+          document.body.className = "pejuang-theme";
+          webTitle.innerText = "Dashboard Pengajuan - Pejuang Casino";
+        }
+        showPengajuan(); // Reset teks tabel ke brand baru
+        alert(`Berhasil beralih ke ${currentBrand} CASINO`);
+      }
+    }
 
     function openModal() {
       if (waInput.value.trim() === "") {
-        alert("Isi nomor dulu Bang!");
-        return;
+        alert("Isi nomor dulu Bang!"); return;
       }
-      overlay.style.display = 'flex';
+      document.getElementById('overlay').style.display = 'flex';
     }
 
     function closeModal() {
-      overlay.style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
     }
 
-    // DATA DEFAULT (Termasuk nomor request Abang)
-    function generateFixedData() {
-      const now = new Date();
-      const dateStr = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+    function showHistoryData() {
+      document.getElementById('navData').classList.add('active');
+      document.getElementById('navPengajuan').classList.remove('active');
+      tableTitle.innerText = `REAL WD ${currentBrand} CASINO HARI INI`;
+      tableHead.innerHTML = "<tr><th>Tanggal</th><th>Nama</th><th>Nomor WA</th><th>Status</th></tr>";
 
-      // Data nomor yang Abang minta + 3 data random
+      const now = new Date().toLocaleDateString('id-ID');
       const fixedData = [{
         nama: "DEWI089",
         wa: "+6282141064844"
@@ -263,56 +301,33 @@
         {
           nama: "Sultan JP",
           wa: "+6281244567781"
-        },
-        {
-          nama: "Rizky Gacor",
-          wa: "+6285722319004"
-        },
-        {
-          nama: "AHMAD BUDI",
-          wa: "+6281388901123"
         }];
-
-      let html = "";
+      tableBody.innerHTML = "";
       fixedData.forEach(item => {
-        html += `<tr><td>${dateStr}</td><td>${item.nama}</td><td style="color: #2ecc71;">${item.wa}</td><td><span class="status-done">DONE</span></td></tr>`;
+        tableBody.innerHTML += `<tr><td>${now}</td><td>${item.nama}</td><td>${item.wa}</td><td><span class="status-done">DONE</span></td></tr>`;
       });
-      return html;
-    }
-
-    function showHistoryData() {
-      document.getElementById('navData').classList.add('active');
-      document.getElementById('navPengajuan').classList.remove('active');
-      tableTitle.innerText = "REAL WD PEJUANG KASINO HARI INI";
-      tableHead.innerHTML = "<tr><th>Tanggal</th><th>Nama</th><th>Nomor WA</th><th>Status</th></tr>";
-      tableBody.innerHTML = generateFixedData();
     }
 
     function showPengajuan() {
       document.getElementById('navData').classList.remove('active');
       document.getElementById('navPengajuan').classList.add('active');
-      tableTitle.innerText = "CATATAN PENGAJUAN JACKPOT PEJUANG CASINO";
+      tableTitle.innerText = `Catatan pengajuan jackpot ${currentBrand.toLowerCase()} casino`;
+      brandDesc.innerText = `Silakan masukkan nomor WhatsApp pengguna untuk melakukan pencarian (${currentBrand} CASINO)`;
       tableHead.innerHTML = "<tr><th>Tanggal</th><th>Nomor WA</th><th>Uid</th><th>No.Deposit</th></tr>";
       tableBody.innerHTML = "";
     }
 
     function prosesData() {
-      const now = new Date();
-      const dateStr = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+      const now = new Date().toLocaleDateString('id-ID');
       const isDataMenu = document.getElementById('navData').classList.contains('active');
 
       if (isDataMenu) {
         const namaManual = prompt("Masukkan Nama Player:");
         if (!namaManual) return;
-
-        const newRow = `<tr><td>${dateStr}</td><td>${namaManual}</td><td style="color: #2ecc71;">${waInput.value}</td><td><span class="status-pending">PROSES</span></td></tr>`;
-        tableBody.insertAdjacentHTML('beforeend', newRow);
-
+        tableBody.insertAdjacentHTML('beforeend', `<tr><td>${now}</td><td>${namaManual}</td><td>${waInput.value}</td><td><span class="status-pending">PROSES</span></td></tr>`);
       } else {
-        const newRow = `<tr><td>${dateStr}</td><td style="color: #2ecc71;">${waInput.value}</td><td>${Math.floor(100000 + Math.random() * 900000)}</td><td>DEP-${Math.floor(1000 + Math.random() * 9000)}</td></tr>`;
-        tableBody.insertAdjacentHTML('afterbegin', newRow);
+        tableBody.insertAdjacentHTML('afterbegin', `<tr><td>${now}</td><td>${waInput.value}</td><td>${Math.floor(100000 + Math.random() * 900000)}</td><td>DEP-${Math.floor(1000 + Math.random() * 9000)}</td></tr>`);
       }
-
       closeModal();
       waInput.value = "";
     }
