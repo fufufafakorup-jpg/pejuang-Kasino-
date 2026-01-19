@@ -20,7 +20,6 @@
       flex-direction: column;
       align-items: center;
     }
-
     .header-text {
       width: 100%;
       max-width: 450px;
@@ -95,7 +94,6 @@
       border-bottom: 1px dotted #222;
     }
 
-    /* STATUS COLOR */
     .status-done {
       color: #2ecc71;
       font-weight: 600;
@@ -105,7 +103,6 @@
       font-weight: 600;
     }
 
-    /* MODAL STYLE */
     .overlay {
       position: fixed;
       top: 0;
@@ -153,7 +150,6 @@
       cursor: pointer;
     }
 
-    /* BOTTOM NAV */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -244,7 +240,7 @@
 
     function openModal() {
       if (waInput.value.trim() === "") {
-        alert("Isi dulu nomor/namanya Bang!");
+        alert("Isi nomor dulu Bang!");
         return;
       }
       overlay.style.display = 'flex';
@@ -254,16 +250,44 @@
       overlay.style.display = 'none';
     }
 
-    // KLIK MENU DATA
+    // DATA DEFAULT (Termasuk nomor request Abang)
+    function generateFixedData() {
+      const now = new Date();
+      const dateStr = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+
+      // Data nomor yang Abang minta + 3 data random
+      const fixedData = [{
+        nama: "DEWI089",
+        wa: "+6282141064844"
+      },
+        {
+          nama: "Sultan JP",
+          wa: "+6281244567781"
+        },
+        {
+          nama: "Rizky Gacor",
+          wa: "+6285722319004"
+        },
+        {
+          nama: "AHMAD BUDI",
+          wa: "+6281388901123"
+        }];
+
+      let html = "";
+      fixedData.forEach(item => {
+        html += `<tr><td>${dateStr}</td><td>${item.nama}</td><td style="color: #2ecc71;">${item.wa}</td><td><span class="status-done">DONE</span></td></tr>`;
+      });
+      return html;
+    }
+
     function showHistoryData() {
       document.getElementById('navData').classList.add('active');
       document.getElementById('navPengajuan').classList.remove('active');
       tableTitle.innerText = "REAL WD PEJUANG KASINO HARI INI";
       tableHead.innerHTML = "<tr><th>Tanggal</th><th>Nama</th><th>Nomor WA</th><th>Status</th></tr>";
-      tableBody.innerHTML = "";
+      tableBody.innerHTML = generateFixedData();
     }
 
-    // KLIK MENU PENGAJUAN
     function showPengajuan() {
       document.getElementById('navData').classList.remove('active');
       document.getElementById('navPengajuan').classList.add('active');
@@ -272,33 +296,19 @@
       tableBody.innerHTML = "";
     }
 
-    // FUNGSI UTAMA TAMBAH DATA
     function prosesData() {
       const now = new Date();
       const dateStr = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
       const isDataMenu = document.getElementById('navData').classList.contains('active');
 
       if (isDataMenu) {
-        // JIKA DI MENU DATA: MINTA NAMA & STATUS
         const namaManual = prompt("Masukkan Nama Player:");
-        if (namaManual === null || namaManual === "") {
-          alert("Nama tidak boleh kosong!");
-          return;
-        }
+        if (!namaManual) return;
 
-        const statusManual = prompt("Ketik 1 untuk DONE, Ketik 2 untuk PROSES:");
-        let statusHTML = "";
-        if (statusManual === "1") {
-          statusHTML = '<span class="status-done">DONE</span>';
-        } else {
-          statusHTML = '<span class="status-pending">PROSES</span>';
-        }
-
-        const newRow = `<tr><td>${dateStr}</td><td>${namaManual}</td><td style="color: #2ecc71;">${waInput.value}</td><td>${statusHTML}</td></tr>`;
-        tableBody.insertAdjacentHTML('afterbegin', newRow);
+        const newRow = `<tr><td>${dateStr}</td><td>${namaManual}</td><td style="color: #2ecc71;">${waInput.value}</td><td><span class="status-pending">PROSES</span></td></tr>`;
+        tableBody.insertAdjacentHTML('beforeend', newRow);
 
       } else {
-        // JIKA DI MENU PENGAJUAN: OTOMATIS UID & DEPO
         const newRow = `<tr><td>${dateStr}</td><td style="color: #2ecc71;">${waInput.value}</td><td>${Math.floor(100000 + Math.random() * 900000)}</td><td>DEP-${Math.floor(1000 + Math.random() * 9000)}</td></tr>`;
         tableBody.insertAdjacentHTML('afterbegin', newRow);
       }
@@ -312,4 +322,4 @@
     });
   </script>
 </body>
-          </html>
+</html>
